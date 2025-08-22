@@ -1,6 +1,5 @@
 const PROXY = "https://duco-proxy.onrender.com"; // твой сервер-прокси
 
-// функция загрузки данных по логину
 async function loadData() {
     const username = document.getElementById("username").value.trim();
     if (!username) {
@@ -12,19 +11,19 @@ async function loadData() {
         const res = await fetch(`${PROXY}/duco/${username}`);
         const data = await res.json();
 
-        if (!data.success) {
+        if (!data.result || !data.result.balance) {
             alert("Ошибка загрузки данных");
             return;
         }
 
         // баланс
-        const user = data.result.balance;
-        document.getElementById("balance").innerText = user.balance.toFixed(2);
+        const userBalance = data.result.balance.balance;
+        document.getElementById("balance").innerText = userBalance.toFixed(2);
 
         // список майнеров
-        const miners = data.result.miners;
+        const miners = data.result.miners || [];
         const minersTable = document.getElementById("miners");
-        minersTable.innerHTML = ""; // очистим перед обновлением
+        minersTable.innerHTML = "";
 
         miners.forEach(miner => {
             const row = document.createElement("tr");
@@ -45,5 +44,5 @@ async function loadData() {
     }
 }
 
-// автообновление каждые 5 секунд
-setInterval(loadData, 5000);
+// автообновление каждые 30 секунд
+setInterval(loadData, 30000);
